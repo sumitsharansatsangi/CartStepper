@@ -3,23 +3,23 @@ description: A fully customizable Flutter Widget to get count. It can be applica
 version: 4.3.0
 homepage:
 repository: https://github.com/shirne/CartStepper/
-screenshots: 
-  - description: 'cart stepper input'
+screenshots:
+  - description: "cart stepper input"
     path: screenshots/preview.jpg
 
 environment:
-  sdk: ">=2.14.0 <4.0.0"
+  sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  intl: ">=0.17.0"
+  intl: ">=0.20.2"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-    
-  flutter_lints: any
+
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

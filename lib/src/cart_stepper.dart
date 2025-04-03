@@ -1,5 +1,3 @@
-library cart_stepper;
-
 import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
@@ -30,7 +28,7 @@ VM _as<VM extends num>(num? value) {
 /// Cart stepper widget
 class CartStepper<VM extends num> extends StatefulWidget {
   const CartStepper({
-    Key? key,
+    super.key,
 
     /// value
     VM? value,
@@ -47,9 +45,8 @@ class CartStepper<VM extends num> extends StatefulWidget {
     this.elevation,
     this.alwaysExpanded = false,
     this.style,
-  })  : _value = (value ?? count ?? (0 is VM ? 0 : 0.0)) as VM,
-        _stepper = (stepper ?? (0 is VM ? 1 : 1.0)) as VM,
-        super(key: key);
+  }) : _value = (value ?? count ?? (0 is VM ? 0 : 0.0)) as VM,
+       _stepper = (stepper ?? (0 is VM ? 1 : 1.0)) as VM;
 
   final VM _value;
 
@@ -88,14 +85,14 @@ class _CartStepperState<VM extends num> extends State<CartStepper<VM>> {
   bool _editMode = false;
   String lastText = '';
   late final TextEditingController _controller;
-  late final FocusNode _focusNode = FocusNode()
-    ..addListener(() {
-      if (_editMode && !_focusNode.hasFocus) {
-        setState(() {
-          _editMode = false;
-        });
-      }
-    });
+  late final FocusNode _focusNode =
+      FocusNode()..addListener(() {
+        if (_editMode && !_focusNode.hasFocus) {
+          setState(() {
+            _editMode = false;
+          });
+        }
+      });
 
   num defaultValue = 0;
 
@@ -158,8 +155,10 @@ class _CartStepperState<VM extends num> extends State<CartStepper<VM>> {
     final isExpanded = _editMode || widget.alwaysExpanded || widget._value > 0;
 
     final textStyle = _textStyle
-        .merge(Theme.of(context).textTheme.bodyMedium?.merge(style.textStyle) ??
-            style.textStyle)
+        .merge(
+          Theme.of(context).textTheme.bodyMedium?.merge(style.textStyle) ??
+              style.textStyle,
+        )
         .copyWith(
           height: 1.25,
           fontSize: widget.size * 0.5,
@@ -186,9 +185,10 @@ class _CartStepperState<VM extends num> extends State<CartStepper<VM>> {
             child: Center(
               child: Icon(
                 style.iconPlus ?? CupertinoIcons.add,
-                color: isExpanded
-                    ? style.activeForegroundColor
-                    : style.foregroundColor,
+                color:
+                    isExpanded
+                        ? style.activeForegroundColor
+                        : style.foregroundColor,
               ),
             ),
           ),
@@ -207,45 +207,48 @@ class _CartStepperState<VM extends num> extends State<CartStepper<VM>> {
             });
           },
           behavior: HitTestBehavior.opaque,
-          child: Container(
+          child: Align(
             alignment: Alignment.center,
-            width:
-                isVertical ? widget.size : widget.size * widget.numberSize * .5,
-            child: _editMode
-                ? EditableText(
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    textAlign: TextAlign.center,
-                    keyboardType:
-                        widget.editKeyboardType ?? TextInputType.number,
-                    style: textStyle,
-                    cursorColor: style.activeForegroundColor,
-                    backgroundCursorColor: style.activeBackgroundColor,
-                    inputFormatters: [
-                      if (0 is VM) FilteringTextInputFormatter.digitsOnly
-                    ],
-                    onEditingComplete: () {
-                      setState(() {
-                        _editMode = false;
-                      });
-                    },
-                    onChanged: (String value) {
-                      VM? newValue = parseValue(_controller.text);
-                      if (newValue == null) {
-                        _controller.text = lastText;
-                        _controller.selection =
-                            TextSelection.collapsed(offset: lastText.length);
-                      } else {
-                        value = widget.format?.format(newValue) ?? value;
-                        lastText = value;
-                        widget.didChangeCount(newValue);
-                      }
-                    },
-                  )
-                : Text(
-                    format(widget._value),
-                    softWrap: false,
-                  ),
+            child: SizedBox(
+              width:
+                  isVertical
+                      ? widget.size
+                      : widget.size * widget.numberSize * .5,
+              child:
+                  _editMode
+                      ? EditableText(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        textAlign: TextAlign.center,
+                        keyboardType:
+                            widget.editKeyboardType ?? TextInputType.number,
+                        style: textStyle,
+                        cursorColor: style.activeForegroundColor,
+                        backgroundCursorColor: style.activeBackgroundColor,
+                        inputFormatters: [
+                          if (0 is VM) FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        onEditingComplete: () {
+                          setState(() {
+                            _editMode = false;
+                          });
+                        },
+                        onChanged: (String value) {
+                          VM? newValue = parseValue(_controller.text);
+                          if (newValue == null) {
+                            _controller.text = lastText;
+                            _controller.selection = TextSelection.collapsed(
+                              offset: lastText.length,
+                            );
+                          } else {
+                            value = widget.format?.format(newValue) ?? value;
+                            lastText = value;
+                            widget.didChangeCount(newValue);
+                          }
+                        },
+                      )
+                      : Text(format(widget._value), softWrap: false),
+            ),
           ),
         ),
       );
@@ -255,10 +258,11 @@ class _CartStepperState<VM extends num> extends State<CartStepper<VM>> {
           borderRadius: borderRadius,
           highlightShape: BoxShape.rectangle,
           onTap: () {
-            _buttonSetValue(_as(math.max(
-              (widget._value - widget._stepper),
-              _as(defaultValue),
-            )));
+            _buttonSetValue(
+              _as(
+                math.max((widget._value - widget._stepper), _as(defaultValue)),
+              ),
+            );
           },
           child: SizedBox(
             width: isVertical ? widget.size : null,
@@ -277,7 +281,7 @@ class _CartStepperState<VM extends num> extends State<CartStepper<VM>> {
       );
       if (style.border != null) {
         if (isVertical) {
-          childs[0] = Container(
+          childs[0] = DecoratedBox(
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(color: style.border!.top.color),
@@ -285,28 +289,22 @@ class _CartStepperState<VM extends num> extends State<CartStepper<VM>> {
             ),
             child: childs[0],
           );
-          childs[2] = Container(
+          childs[2] = DecoratedBox(
             decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: style.border!.top.color),
-              ),
+              border: Border(top: BorderSide(color: style.border!.top.color)),
             ),
             child: childs[2],
           );
         } else {
-          childs[0] = Container(
+          childs[0] = DecoratedBox(
             decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(color: style.border!.top.color),
-              ),
+              border: Border(left: BorderSide(color: style.border!.top.color)),
             ),
             child: childs[0],
           );
-          childs[2] = Container(
+          childs[2] = DecoratedBox(
             decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(color: style.border!.top.color),
-              ),
+              border: Border(right: BorderSide(color: style.border!.top.color)),
             ),
             child: childs[2],
           );
@@ -322,15 +320,13 @@ class _CartStepperState<VM extends num> extends State<CartStepper<VM>> {
       shadowColor: style.shadowColor ?? const Color.fromARGB(255, 0, 0, 0),
       color: isExpanded ? style.activeBackgroundColor : style.backgroundColor,
       elevation: widget.elevation ?? style.elevation,
-      child: isVertical
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              children: childs,
-            )
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: childs.reversed.toList(),
-            ),
+      child:
+          isVertical
+              ? Column(mainAxisSize: MainAxisSize.min, children: childs)
+              : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: childs.reversed.toList(),
+              ),
     );
 
     if (style.border != null) {
