@@ -1,4 +1,4 @@
-library cart_stepper;
+library;
 
 export 'src/cart_stepper.dart';
 export 'src/stepper_style.dart';
